@@ -1,18 +1,4 @@
 # vim:ft=zsh ts=4 sw=4 sts=4
-#if [ $UID -eq 0 ]; then CARETCOLOR="red"; else CARETCOLOR="blue"; fi
-#
-#local return_code="%(?..%{$fg[red]%}%? ↵%{$reset_color%})"
-#
-#PROMPT='%m %{${fg_bold[blue]}%}:: %{$reset_color%}%{${fg[green]}%}%3~ $(git_prompt_info)%{${fg_bold[$CARETCOLOR]}%}»%{${reset_color}%} '
-#
-#RPS1="${return_code}"
-#
-#ZSH_THEME_GIT_PROMPT_PREFIX="%{$fg[yellow]%}‹"
-#ZSH_THEME_GIT_PROMPT_SUFFIX="› %{$reset_color%}"
-
-# Begin a segment
-# Takes two arguments, background and foreground. Both can be omitted,
-# rendering default background/foreground.
 
 prompt_segment() {
 	local fg
@@ -53,8 +39,9 @@ prompt_exit() {
 }
 
 prompt_dir() {
+	local dircolor cdup color dir pdir retract gitdir
 	dircolor="%{$fg_bold[blue]%}"
-	if [[ $INGIT -eq 1 ]] ; then
+	if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1) ; then
 		cdup=`git rev-parse --show-cdup 2> /dev/null`
 		color="%{$fg_bold[magenta]%}"
 		git diff --quiet HEAD &>/dev/null 
@@ -110,12 +97,7 @@ build_prompt() {
 	prompt_dir
 	prompt_git
 	prompt_segment "%{$fg_bold[blue]%}" "\$"
-	#prompt_status
-	#prompt_context
-	#prompt_dir
-	#prompt_hg
-	#prompt_end
 }
 
-PROMPT='%{%f%b%k%}$(build_prompt) '
+PROMPT='$(build_prompt) '
 
